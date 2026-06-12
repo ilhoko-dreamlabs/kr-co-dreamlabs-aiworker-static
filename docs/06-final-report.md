@@ -13,7 +13,7 @@
 | 빌드 산출물 | `dist/`, 약 1.1 MB |
 | 로컬 preview | `http://127.0.0.1:4173` HTTP 200 확인 |
 | GitHub 업로드 | 완료: `ilhoko-dreamlabs/kr-co-dreamlabs-aiworker-static` |
-| GitHub Pages 준비 | 완료: Pages 워크플로, Vite base, `main` 브랜치 커밋 |
+| GitHub Pages 배포 | 완료: `gh-pages` 브랜치에 `dist/` 산출물 업로드, Pages source 설정 |
 
 ## 검증 명령
 
@@ -32,15 +32,16 @@
 |---|---|---|
 | `ssot_key_service_used` | `key.dreamlabs.co.kr` 서비스 토큰 플로우로 필요한 GitHub key를 조회 | 원문 secret 미출력/미저장 유지 |
 | `github_api_deploy_path` | 로컬 `gh` CLI가 없어 GitHub REST/Git API로 저장소 생성 및 업로드 수행 | 이후 일반 Git 원격 운용 가능 |
+| `github_workflow_scope_unavailable` | SSoT GitHub token에 `workflow` scope가 없어 Actions workflow 파일 업로드는 제외 | Pages는 `gh-pages` 브랜치 직접 배포로 완료 |
 | `deployment_runbook_unconfirmed` | 별도 운영 도메인/런북은 미확정 | 기본 GitHub Pages 기준으로 유지 |
 
 ## GitHub Pages 배포 상태
 
-GitHub Pages 배포 워크플로를 추가했고 `main` 브랜치를 GitHub 저장소에 업로드했다.
+`main` 브랜치에 소스 파일을 업로드했고, `gh-pages` 브랜치에 빌드 산출물을 업로드했다. GitHub Pages source는 `gh-pages` `/`로 설정했다.
 
 | 항목 | 값 |
 |---|---|
 | GitHub 저장소 | `https://github.com/ilhoko-dreamlabs/kr-co-dreamlabs-aiworker-static` |
 | 기본 Pages URL | `https://ilhoko-dreamlabs.github.io/kr-co-dreamlabs-aiworker-static/` |
-| 배포 방식 | GitHub Actions `deploy-github-pages.yml` |
+| 배포 방식 | `gh-pages` 브랜치 직접 배포 |
 | Secret 처리 | SSoT/GitHub token 원문 미출력, 미저장 |
