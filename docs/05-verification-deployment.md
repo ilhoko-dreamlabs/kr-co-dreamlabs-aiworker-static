@@ -28,10 +28,10 @@
 |---:|---|---|---|---|
 | 1 | 로컬 변경 검토 | 승인됨 | 불필요 | Git |
 | 2 | 타입 체크 및 빌드 재검증 | 승인됨 | 불필요 | npm |
-| 3 | 커밋 생성 | 명시 승인 필요 | 커밋 메시지 결정 | Git |
-| 4 | 원격 브랜치 푸시 | 명시 승인 필요 | 브랜치명 결정 | GitHub 인증 |
-| 5 | PR 생성 또는 직접 gh-pages 배포 | 명시 승인 필요 | 반영 방식 결정 | GitHub 권한 |
-| 6 | Pages 배포 확인 | 배포 승인 후 수행 | 불필요 | Pages 전파 |
+| 3 | 커밋 생성 | 승인됨, 완료 | `chore: prepare aiworker custom domain deployment` | Git |
+| 4 | 원격 브랜치 푸시 | 승인됨, 완료 | `main` 직접 반영 | GitHub 인증 |
+| 5 | PR 생성 또는 직접 gh-pages 배포 | 승인됨, 완료 | `gh-pages` 직접 배포 | GitHub 권한 |
+| 6 | Pages 배포 확인 | 수행 | GitHub Pages 리다이렉트 확인, DNS 미해결 | Pages 전파, DNS |
 
 ## 기존 2026-06-12 GitHub 배포 이력
 
@@ -49,16 +49,16 @@
 
 ## 2026-06-22 현재 작업 판단
 
-이번 작업은 `https://aiworker.dreamlabs.co.kr` 커스텀 도메인 기준 배포 준비이다. 로컬 설정과 문서는 정비했지만, 커밋, 푸시, PR, `gh-pages` 배포, production 검증은 아직 수행하지 않았다.
+이번 작업은 `https://aiworker.dreamlabs.co.kr` 커스텀 도메인 기준으로 `main` 커밋/푸시와 `gh-pages` 배포까지 수행했다. GitHub Pages 기본 URL은 custom domain으로 리다이렉트되지만, production URL은 DNS 해석 실패로 최종 접속 검증이 완료되지 않았다.
 
 ## 운영 확인 항목
 
 | 확인 항목 | 상태 | 비고 |
 |---|---|---|
 | GitHub 저장소 URL | 완료 | `https://github.com/ilhoko-dreamlabs/kr-co-dreamlabs-aiworker-static` |
-| 목표 production URL | 준비 필요 | `https://aiworker.dreamlabs.co.kr` |
-| Pages URL | 보조 확인 대상 | `https://ilhoko-dreamlabs.github.io/kr-co-dreamlabs-aiworker-static/` |
-| 도메인 연결 | 필요 | `public/CNAME` 반영 후 GitHub Pages 및 DNS 확인 |
+| 목표 production URL | DNS 확인 필요 | `https://aiworker.dreamlabs.co.kr` |
+| Pages URL | 확인됨 | `https://ilhoko-dreamlabs.github.io/kr-co-dreamlabs-aiworker-static/`가 custom domain으로 301 리다이렉트 |
+| 도메인 연결 | 부분 완료 | `gh-pages/CNAME` 반영 완료, DNS 해석 불가 |
 | Secret 원문 관리 | 완료 | SSoT/GitHub token 원문 미출력, 미저장 |
 
 ## 배포 후 production 검증 절차
