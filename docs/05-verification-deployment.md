@@ -16,22 +16,24 @@
 | 배포 플랫폼 | GitHub Pages | 정적 산출물 배포에 적합 |
 | 저장소명 | `kr-co-dreamlabs-aiworker-static` | 프로젝트명과 일치 |
 | 기본 브랜치 | `main` | 소스 코드 기준 브랜치 |
-| Vite base | `/kr-co-dreamlabs-aiworker-static/` | 프로젝트 Pages URL 대응 |
+| 목표 production URL | `https://aiworker.dreamlabs.co.kr` | 커스텀 도메인 루트 기준 |
+| Vite base | `/` | 커스텀 도메인 루트 배포 대응 |
+| CNAME | `aiworker.dreamlabs.co.kr` | `public/CNAME`으로 산출물 포함 |
 | 배포 방식 | `gh-pages` 브랜치 직접 배포 | 현재 GitHub token에 `workflow` scope가 없어 Actions workflow 업로드 불가 |
-| 도메인 연결 | 미결정 | 이번 작업에서는 기본 Pages URL 우선 |
+| 도메인 연결 | 필요 | GitHub Pages custom domain과 DNS 상태 확인 필요 |
 
-## GitHub 배포 절차
+## GitHub 반영 및 배포 절차
 
 | 순서 | 작업 | 승인 여부 | 의사결정 여부 | 종속성 |
 |---:|---|---|---|---|
-| 1 | 로컬 Git 저장소 초기화 | 승인됨 | 불필요 | Git |
-| 2 | GitHub Pages 배포 경로 구성 | 승인됨 | 불필요 | GitHub Pages |
-| 3 | 타입 체크 및 빌드 재검증 | 승인됨 | 불필요 | npm |
-| 4 | GitHub 원격 저장소 생성 | 승인됨 | GitHub 권한 필요 | GitHub 인증 |
-| 5 | `main` 브랜치 푸시 | 승인됨 | GitHub 권한 필요 | GitHub 인증 |
-| 6 | Pages 배포 확인 | 승인됨 | 불필요 | Pages 전파 |
+| 1 | 로컬 변경 검토 | 승인됨 | 불필요 | Git |
+| 2 | 타입 체크 및 빌드 재검증 | 승인됨 | 불필요 | npm |
+| 3 | 커밋 생성 | 명시 승인 필요 | 커밋 메시지 결정 | Git |
+| 4 | 원격 브랜치 푸시 | 명시 승인 필요 | 브랜치명 결정 | GitHub 인증 |
+| 5 | PR 생성 또는 직접 gh-pages 배포 | 명시 승인 필요 | 반영 방식 결정 | GitHub 권한 |
+| 6 | Pages 배포 확인 | 배포 승인 후 수행 | 불필요 | Pages 전파 |
 
-## 2026-06-12 GitHub 배포 결과
+## 기존 2026-06-12 GitHub 배포 이력
 
 | 항목 | 결과 |
 |---|---|
@@ -43,13 +45,36 @@
 | 로컬 `gh` CLI | 미설치 |
 | 로컬 GitHub HTTPS 인증 | 사용하지 않음 |
 | SSoT secret 처리 | 원문 토큰 출력/저장/로그 기록 없음 |
-| 실제 배포 | GitHub 저장소 업로드 완료, Pages `gh-pages` 소스 설정 완료 |
+| 실제 배포 | 당시 GitHub 저장소 업로드 및 Pages `gh-pages` 소스 설정 완료 |
+
+## 2026-06-22 현재 작업 판단
+
+이번 작업은 `https://aiworker.dreamlabs.co.kr` 커스텀 도메인 기준 배포 준비이다. 로컬 설정과 문서는 정비했지만, 커밋, 푸시, PR, `gh-pages` 배포, production 검증은 아직 수행하지 않았다.
 
 ## 운영 확인 항목
 
 | 확인 항목 | 상태 | 비고 |
 |---|---|---|
 | GitHub 저장소 URL | 완료 | `https://github.com/ilhoko-dreamlabs/kr-co-dreamlabs-aiworker-static` |
-| Pages URL | 전파 확인 필요 | `https://ilhoko-dreamlabs.github.io/kr-co-dreamlabs-aiworker-static/` |
-| 도메인 연결 | 보류 | 별도 도메인 정책 미확정 |
+| 목표 production URL | 준비 필요 | `https://aiworker.dreamlabs.co.kr` |
+| Pages URL | 보조 확인 대상 | `https://ilhoko-dreamlabs.github.io/kr-co-dreamlabs-aiworker-static/` |
+| 도메인 연결 | 필요 | `public/CNAME` 반영 후 GitHub Pages 및 DNS 확인 |
 | Secret 원문 관리 | 완료 | SSoT/GitHub token 원문 미출력, 미저장 |
+
+## 배포 후 production 검증 절차
+
+| 순서 | 확인 항목 | 명령 또는 방법 | 성공 기준 |
+|---:|---|---|---|
+| 1 | production URL 응답 | `curl -I https://aiworker.dreamlabs.co.kr` | HTTP 200 또는 정상 정적 응답 |
+| 2 | HTML asset 경로 | 브라우저 개발자 도구 또는 `curl` | `/assets/...` 경로가 404 아님 |
+| 3 | CNAME 산출물 | `cat dist/CNAME` | `aiworker.dreamlabs.co.kr` |
+| 4 | 화면 동작 | 브라우저 확인 | 운영 상태 화면이 에러 없이 표시 |
+| 5 | 캐시 영향 | 강력 새로고침 또는 다른 네트워크 | 이전 asset 경로 잔존 여부 확인 |
+
+## 롤백 기준
+
+| 상황 | 롤백 권고 |
+|---|---|
+| production URL이 에러 페이지 표시 | 직전 정상 `gh-pages` 커밋으로 되돌림 |
+| asset 경로 404 발생 | Vite base와 배포 산출물 경로 재확인 후 재배포 |
+| DNS/SSL 불일치 | 코드 롤백보다 DNS/GitHub Pages 설정 점검 우선 |

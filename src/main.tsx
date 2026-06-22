@@ -33,9 +33,9 @@ const workItems = [
   },
   {
     title: "배포 준비",
-    status: "보류",
-    detail: "승인된 배포 런북이 확인되기 전까지 실제 운영 배포는 수행하지 않습니다.",
-    dependency: "배포 권한, 런북"
+    status: "로컬 완료",
+    detail: "aiworker.dreamlabs.co.kr 커스텀 도메인 기준으로 빌드 설정과 CNAME을 정비했습니다.",
+    dependency: "GitHub Pages, DNS"
   }
 ];
 
@@ -66,9 +66,9 @@ function App() {
             <ShieldCheck size={22} />
             <span>작업 기준</span>
           </div>
-          <h2>SSoT 후보 신호를 보존하고 정적 산출물까지 완성</h2>
+          <h2>aiworker.dreamlabs.co.kr 기준 정적 배포 준비</h2>
           <p>
-            이 페이지는 DreamLabs AI Worker 신규 정적 프로젝트의 외부 공개용 첫 화면입니다.
+            이 페이지는 DreamLabs AI Worker 정적 프로젝트의 외부 공개용 첫 화면입니다.
             보호 자격증명은 저장하지 않고, 검증 가능한 작업 상태와 배포 판단만 표시합니다.
           </p>
         </div>
@@ -143,8 +143,8 @@ function App() {
           </div>
           <ol>
             <li>빌드 산출물을 검증합니다.</li>
-            <li>승인된 배포 런북과 계정을 확인합니다.</li>
-            <li>런북이 확인되면 배포 URL을 최종 보고에 반영합니다.</li>
+            <li>커밋, 푸시, PR 또는 gh-pages 배포 승인 범위를 확정합니다.</li>
+            <li>배포가 완료되면 production URL을 검증합니다.</li>
           </ol>
         </div>
       </section>
@@ -157,7 +157,7 @@ function App() {
           </div>
           <p>
             작업 문서와 구현 파일은 같은 저장소 안에 유지됩니다. 운영 배포는 별도 승인된
-            런북이 확인될 때 수행하는 것이 현재 권고안입니다.
+            런북이 확인될 때 수행하며, 목표 production URL은 https://aiworker.dreamlabs.co.kr 입니다.
           </p>
         </div>
         <a className="cta-link" href="/docs/">
