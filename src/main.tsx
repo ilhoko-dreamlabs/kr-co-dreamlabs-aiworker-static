@@ -20,6 +20,12 @@ import "./styles.css";
 
 const ASSET_HOST = "https://assets.dreamlabs.co.kr";
 
+type ChatMessage = {
+  id: string;
+  role: "user" | "assistant";
+  text: string;
+};
+
 const highlights = [
   {
     icon: Workflow,
@@ -82,6 +88,202 @@ const links = [
     active: false
   }
 ];
+
+function createIdempotencyKey() {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return crypto.randomUUID();
+  }
+
+  return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+function extractReply(payload: unknown): string {
+  if (typeof payload === "string") {
+    return payload;
+  }
+
+  if (!payload || typeof payload !== "object") {
+    return "";
+  }
+
+  const record = payload as Record<string, unknown>;
+  const candidates = [
+    record.reply,
+    record.output,
+    record.text,
+    record.content,
+    record.message,
+    record.result
+  ];
+
+  for (const candidate of candidates) {
+    if (typeof candidate === "string" && candidate.trim()) {
+      return candidate.trim();
+    }
+
+    if (candidate && typeof candidate === "object") {
+      const nested = extractReply(candidate);
+
+      if (nested) {
+        return nested;
+      }
+    }
+  }
+
+  return "";
+}
+
+function getResultUrl(payload: unknown) {
+  if (!payload || typeof payload !== "object") {
+    return "";
+  }
+
+  const value = (payload as Record<string, unknown>).resultUrl;
+  return typeof value === "string" ? value : "";
+}
+
+async function pollChatResult(resultUrl: string) {
+  for (let attempt = 0; attempt < 10; attempt += 1) {
+    await new Promise((resolve) => setTimeout(resolve, attempt < 3 ? 1200 : 2500));
+
+    const response = await fetch(`/api/chat-result?resultUrl=${encodeURIComponent(resultUrl)}`);
+    const payload = await response.json();
+
+    if (response.status === 202) {
+      continue;
+    }
+
+    if (!response.ok) {
+      throw new Error("result_poll_failed");
+    }
+
+    return payload;
+  }
+
+  return null;
+}
+
+function ChatWidget() {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [input, setInput] = React.useState("");
+  const [messages, setMessages] = React.useState<ChatMessage[]>([
+    {
+      id: "welcome",
+      role: "assistant",
+      text: "안녕하세요. DreamLabs Worker에게 궁금한 내용을 물어보세요."
+    }
+  ]);
+  const [isSending, setIsSending] = React.useState(false);
+
+  async function sendMessage(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const prompt = input.trim();
+
+    if (!prompt || isSending) {
+      return;
+    }
+
+    const idempotencyKey = createIdempotencyKey();
+
+    setInput("");
+    setIsSending(true);
+    setMessages((current) => [
+      ...current,
+      { id: `user-${idempotencyKey}`, role: "user", text: prompt }
+    ]);
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ prompt, waitSeconds: 30, idempotencyKey })
+      });
+      const payload = await response.json();
+      const finalPayload =
+        response.status === 202 && getResultUrl(payload)
+          ? await pollChatResult(getResultUrl(payload))
+          : payload;
+      const reply = extractReply(finalPayload);
+
+      setMessages((current) => [
+        ...current,
+        {
+          id: `assistant-${idempotencyKey}`,
+          role: "assistant",
+          text:
+            reply ||
+            (response.status === 202
+              ? "요청이 접수되었습니다. 결과 조회 방식이 확정되면 이어서 표시할 수 있습니다."
+              : "Worker 응답을 표시할 수 없습니다.")
+        }
+      ]);
+    } catch {
+      setMessages((current) => [
+        ...current,
+        {
+          id: `assistant-error-${idempotencyKey}`,
+          role: "assistant",
+          text: "현재 Worker 연결이 원활하지 않습니다. 잠시 후 다시 시도해 주세요."
+        }
+      ]);
+    } finally {
+      setIsSending(false);
+    }
+  }
+
+  return (
+    <aside className="chat-widget" aria-label="DreamLabs Worker 챗봇">
+      {isOpen ? (
+        <section className="chat-panel" aria-label="Worker 채팅">
+          <header className="chat-panel-header">
+            <div>
+              <strong>Worker Chat</strong>
+              <span>worker0 Remote Request API</span>
+            </div>
+            <button type="button" onClick={() => setIsOpen(false)} aria-label="채팅 닫기">
+              ×
+            </button>
+          </header>
+          <div className="chat-messages" aria-live="polite">
+            {messages.map((message) => (
+              <p className={`chat-message is-${message.role}`} key={message.id}>
+                {message.text}
+              </p>
+            ))}
+            {isSending ? <p className="chat-message is-assistant">Worker가 처리 중입니다.</p> : null}
+          </div>
+          <form className="chat-form" onSubmit={sendMessage}>
+            <label htmlFor="worker-chat-input">메시지</label>
+            <textarea
+              id="worker-chat-input"
+              value={input}
+              onChange={(event) => setInput(event.target.value)}
+              placeholder="무엇을 도와드릴까요?"
+              rows={2}
+            />
+            <button type="submit" disabled={isSending || !input.trim()}>
+              <MessageSquareText size={17} />
+              전송
+            </button>
+          </form>
+        </section>
+      ) : null}
+      <button
+        className="chat-toggle"
+        type="button"
+        onClick={() => setIsOpen((current) => !current)}
+        aria-expanded={isOpen}
+        aria-label="Worker 채팅 열기"
+      >
+        <Bot size={22} />
+        <span>Worker에게 묻기</span>
+      </button>
+    </aside>
+  );
+}
 
 function App() {
   return (
@@ -231,6 +433,7 @@ function App() {
           contact
         </a>
       </footer>
+      <ChatWidget />
     </main>
   );
 }

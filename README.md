@@ -7,8 +7,10 @@ DreamLabs 대표 Worker를 홍보하고 블로그형 업데이트와 외부 채�
 | 항목 | 값 |
 |---|---|
 | 목표 production URL | `https://worker.dreamlabs.co.kr` |
-| 배포 방식 | GitHub Actions 기반 GitHub Pages 정적 배포 |
-| 커스텀 도메인 파일 | `public/CNAME` |
+| 배포 방식 | Vercel 정적 프론트엔드 + Vercel Functions API 프록시 |
+| Vercel 프로젝트 | `kr-co-dreamlabs-aiworker-static` |
+| Vercel 프로젝트 ID | `prj_TyCtJh6vXu4cqcj8UZH93LyInANz` |
+| Vercel org ID | `team_v0Ku5wzd28j7Ki2iAIBZamGa` |
 | Vite base | `/` |
 
 ## 실행
@@ -23,6 +25,29 @@ npm run dev
 ```bash
 npm run check
 npm run build
+```
+
+## Worker Chat API
+
+브라우저는 `/api/chat`만 호출하고, Vercel Function이 서버에서
+`https://worker0.dreamlabs.co.kr/api/v1/requests` Remote Request API에 프록시합니다.
+Remote Request API key는 브라우저 번들에 포함하지 않습니다.
+
+Vercel 프로젝트 환경변수에 아래 값을 입력합니다.
+
+```bash
+REMOTE_REQUEST_API_URL=https://worker0.dreamlabs.co.kr/api/v1/requests
+REMOTE_REQUEST_API_KEY=<REMOTE_REQUEST_API_KEY>
+```
+
+주의: `REMOTE_REQUEST_API_KEY`에는 `NEXT_PUBLIC_` 접두사를 붙이지 않습니다.
+
+GitHub Actions 배포를 사용하려면 GitHub repository secrets에 아래 값을 입력합니다.
+
+```bash
+VERCEL_TOKEN=<VERCEL_TOKEN>
+VERCEL_ORG_ID=team_v0Ku5wzd28j7Ki2iAIBZamGa
+VERCEL_PROJECT_ID=prj_TyCtJh6vXu4cqcj8UZH93LyInANz
 ```
 
 ## 문서
@@ -42,16 +67,19 @@ npm run build
 
 ## 배포
 
-GitHub Pages 배포는 `main` 브랜치 push 시 `.github/workflows/pages.yml`이 `dist/` 산출물을 빌드해 Pages에 게시하는 방식입니다.
+Vercel 배포는 `main` 브랜치 push 시 `.github/workflows/vercel.yml`이 실행합니다.
+빌드 산출물은 `dist/`이며, 서버 함수는 `api/` 디렉터리에서 제공합니다.
 
 ```bash
 npm run build
 ```
 
-`https://worker.dreamlabs.co.kr` 루트 도메인으로 배포하기 위해 Vite `base`는 `/`로 설정하고, `public/CNAME`을 통해 빌드 산출물에 `CNAME`이 포함되도록 유지합니다.
+`https://worker.dreamlabs.co.kr` 루트 도메인으로 배포하기 위해 Vite `base`는 `/`로 설정합니다.
+Vercel 전환 후 DNS는 Vercel에서 안내하는 CNAME/A 레코드 기준으로 변경합니다.
 
 ## 운영 주의사항
 
 - 기존 공개 URL 변경, 자산 삭제, DNS/SSL 변경, production 배포는 명시 승인 후 수행합니다.
+- `REMOTE_REQUEST_API_KEY`는 Vercel 서버 환경변수에만 저장합니다.
 - 커밋, 푸시, PR 생성은 별도 승인 항목으로 기록합니다.
 - 텔레그램 보고는 발송 도구 또는 봇 토큰이 제공된 경우에만 실제 발송할 수 있습니다.
