@@ -67,6 +67,33 @@ const posts = [
   }
 ];
 
+const useCases = [
+  {
+    title: "협업 채널에서 바로 묻고 정리하기",
+    category: "Mattermost",
+    image: "/use-cases/mattermost-worker-collaboration.png",
+    alt: "Mattermost 채널에서 worker0가 질문에 답변하고 후속 일정을 정리하는 화면",
+    text:
+      "업무 채널 안에서 Worker를 호출해 확인 절차, 참고 링크, 일정 등록까지 이어지는 실무 대화를 남깁니다."
+  },
+  {
+    title: "작업 세션과 지식을 한 화면에서 추적",
+    category: "Worker Console",
+    image: "/use-cases/local-worker-knowledge-wiki.png",
+    alt: "DreamLabs Worker 콘솔에서 작업 결과와 Runtime Knowledge Wiki 그래프를 함께 보는 화면",
+    text:
+      "로컬 Worker 세션, 작업 결과, Runtime Knowledge Wiki를 함께 보며 진행률과 근거 자료를 점검합니다."
+  },
+  {
+    title: "메신저에서도 자연스러운 업무 응답",
+    category: "Messenger",
+    image: "/use-cases/messenger-worker-response.png",
+    alt: "메신저 대화에서 Worker가 사용자의 호출 표현을 이해하고 응답하는 화면",
+    text:
+      "일상적인 대화 흐름 안에서도 Worker를 호출해 요청 의도를 파악하고 필요한 답변을 이어갑니다."
+  }
+];
+
 const links = [
   {
     label: "Worker Live AI",
@@ -347,6 +374,7 @@ function App() {
         </a>
         <nav aria-label="주요 메뉴">
           <a href="#features">기능</a>
+          <a href="#use-cases">활용예시</a>
           <a href="#posts">포스트</a>
           <a href="#channels">채널</a>
         </nav>
@@ -415,6 +443,31 @@ function App() {
               </article>
             );
           })}
+        </div>
+      </section>
+
+      <section id="use-cases" className="use-case-section" aria-labelledby="use-cases-title">
+        <div className="section-heading">
+          <span>Worker Use Cases</span>
+          <h2 id="use-cases-title">실제 업무 화면으로 보는 Worker 활용예시</h2>
+          <p>
+            채널형 협업, 로컬 작업 세션, 메신저 응답까지 Worker가 어디에서 어떻게
+            쓰이는지 실제 화면 중심으로 보여줍니다.
+          </p>
+        </div>
+        <div className="use-case-grid">
+          {useCases.map((item) => (
+            <article className="use-case-card" key={item.title}>
+              <figure>
+                <img src={item.image} alt={item.alt} loading="lazy" />
+              </figure>
+              <div>
+                <span>{item.category}</span>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+              </div>
+            </article>
+          ))}
         </div>
       </section>
 
