@@ -110,11 +110,14 @@ function extractReply(payload: unknown): string {
   const record = payload as Record<string, unknown>;
   const candidates = [
     record.reply,
+    record.resultSummary,
     record.output,
     record.text,
     record.content,
     record.message,
-    record.result
+    record.result,
+    record.response,
+    record.data
   ];
 
   for (const candidate of candidates) {
