@@ -11,6 +11,9 @@
 | 유튜브 연결 | `https://www.youtube.com/@Worker-live-ai` |
 | CI/CD | GitHub Actions 기반 GitHub Pages 배포 |
 | CNAME | `worker.dreamlabs.co.kr` |
+| 소스 커밋 | `b7cfb77 feat: launch worker landing page` |
+| 배포 커밋 | `c67f5af deploy: publish worker landing page` |
+| CI/CD 실행 | `32102223919` 성공 |
 
 ## 이번 변경
 
@@ -34,10 +37,12 @@
 | `npm audit --include=dev` | 성공, 취약점 0건 |
 | `curl -I -L https://assets.dreamlabs.co.kr/agents/dreamlabs-worker/icon/dreamlabs-bot-icon.png` | 성공, HTTP 200 |
 | `curl -I -L https://assets.dreamlabs.co.kr/brand/dreamlabs/logos/dreamlabs-symbol-color.png` | 성공, HTTP 200 |
+| `curl -I -L https://worker.dreamlabs.co.kr/` | 성공, HTTP 200 |
+| GitHub Pages API 확인 | `build_type: workflow`, `https_enforced: true`, certificate `approved` |
 
 ## 배포 후 확인
 
-GitHub Actions 배포가 완료되면 다음 항목을 확인한다.
+GitHub Actions 배포 완료 후 다음 항목을 확인했다.
 
 | 확인 | 성공 기준 |
 |---|---|
