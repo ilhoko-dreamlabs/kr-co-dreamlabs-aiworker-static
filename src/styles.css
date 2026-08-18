@@ -262,8 +262,7 @@ p {
 }
 
 .feature-grid,
-.post-list,
-.use-case-grid {
+.post-list {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
@@ -290,34 +289,73 @@ p {
   color: #1f6f60;
 }
 
+.use-case-gallery {
+  display: grid;
+  gap: 22px;
+}
+
 .use-case-card {
-  min-height: 430px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.42fr) minmax(290px, 0.58fr);
+  gap: 0;
+  min-height: 0;
   padding: 0;
-  overflow: hidden;
+  overflow: clip;
 }
 
-.use-case-card figure {
-  aspect-ratio: 16 / 10.5;
-  margin: 0;
-  overflow: hidden;
-  background: #e9eee9;
+.use-case-shot {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-height: 360px;
+  padding: 18px;
+  border: 0;
+  border-right: 1px solid #d8e1da;
+  background:
+    linear-gradient(135deg, rgba(30, 102, 89, 0.08), rgba(255, 255, 255, 0)),
+    #edf2ee;
+  cursor: zoom-in;
 }
 
-.use-case-card img {
+.use-case-shot img {
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: cover;
-  object-position: top left;
+  max-height: 620px;
+  object-fit: contain;
+  object-position: center;
+  border: 1px solid rgba(31, 63, 56, 0.16);
+  border-radius: 6px;
+  background: #ffffff;
+  box-shadow: 0 18px 34px rgba(18, 42, 36, 0.14);
 }
 
-.use-case-card div {
+.use-case-shot span {
+  position: absolute;
+  right: 30px;
+  bottom: 30px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: rgba(18, 38, 33, 0.88);
+  color: #ffffff;
+  font-size: 0.84rem;
+  font-weight: 830;
+  box-shadow: 0 12px 24px rgba(15, 32, 28, 0.22);
+}
+
+.use-case-copy {
   display: grid;
+  align-content: start;
   gap: 10px;
-  padding: 20px;
+  padding: 24px;
 }
 
-.use-case-card span {
+.use-case-copy span,
+.image-lightbox header span {
   color: #1f6f60;
   font-size: 0.78rem;
   font-weight: 850;
@@ -326,6 +364,86 @@ p {
 
 .use-case-card p {
   font-size: 0.95rem;
+}
+
+.use-case-card a,
+.image-lightbox-panel a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  width: fit-content;
+  min-height: 38px;
+  margin-top: 4px;
+  padding: 0 12px;
+  border: 1px solid #c9d7cf;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #19352f;
+  font-size: 0.9rem;
+  font-weight: 820;
+  text-decoration: none;
+}
+
+.image-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  background: rgba(11, 23, 20, 0.72);
+}
+
+.image-lightbox-panel {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 14px;
+  width: min(1280px, 100%);
+  max-height: calc(100vh - 44px);
+  padding: 16px;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.34);
+}
+
+.image-lightbox-panel header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.image-lightbox-panel header div {
+  display: grid;
+  gap: 4px;
+}
+
+.image-lightbox-panel header strong {
+  color: #12251f;
+  font-size: 1.02rem;
+}
+
+.image-lightbox-panel button {
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 8px;
+  background: #e7eee9;
+  color: #213f38;
+  font: inherit;
+  font-size: 1.45rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.image-lightbox-panel img {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: contain;
+  border: 1px solid #d8e1da;
+  border-radius: 6px;
+  background: #f2f5f2;
 }
 
 .post-card {
@@ -681,19 +799,42 @@ p {
   }
 
   .feature-grid,
-  .post-list,
-  .use-case-grid {
+  .post-list {
     grid-template-columns: 1fr;
   }
 
   .feature-card,
-  .post-card,
-  .use-case-card {
+  .post-card {
     min-height: auto;
   }
 
-  .use-case-card figure {
-    aspect-ratio: 16 / 11;
+  .use-case-card {
+    grid-template-columns: 1fr;
+  }
+
+  .use-case-shot {
+    min-height: 260px;
+    padding: 12px;
+    border-right: 0;
+    border-bottom: 1px solid #d8e1da;
+  }
+
+  .use-case-shot img {
+    max-height: 520px;
+  }
+
+  .use-case-shot span {
+    right: 22px;
+    bottom: 22px;
+  }
+
+  .image-lightbox {
+    padding: 12px;
+  }
+
+  .image-lightbox-panel {
+    max-height: calc(100vh - 24px);
+    padding: 12px;
   }
 
   .site-footer {

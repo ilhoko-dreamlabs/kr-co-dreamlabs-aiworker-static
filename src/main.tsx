@@ -7,6 +7,7 @@ import {
   ExternalLink,
   Github,
   Mail,
+  Maximize2,
   MessageSquareText,
   Play,
   Radio,
@@ -360,6 +361,8 @@ function ChatWidget() {
 }
 
 function App() {
+  const [activeUseCase, setActiveUseCase] = React.useState<(typeof useCases)[number] | null>(null);
+
   return (
     <main>
       <header className="site-header" aria-label="DreamLabs Worker">
@@ -455,16 +458,29 @@ function App() {
             쓰이는지 실제 화면 중심으로 보여줍니다.
           </p>
         </div>
-        <div className="use-case-grid">
+        <div className="use-case-gallery">
           {useCases.map((item) => (
             <article className="use-case-card" key={item.title}>
-              <figure>
+              <button
+                className="use-case-shot"
+                type="button"
+                onClick={() => setActiveUseCase(item)}
+                aria-label={`${item.title} 이미지 크게 보기`}
+              >
                 <img src={item.image} alt={item.alt} loading="lazy" />
-              </figure>
-              <div>
+                <span>
+                  <Maximize2 size={17} />
+                  크게 보기
+                </span>
+              </button>
+              <div className="use-case-copy">
                 <span>{item.category}</span>
                 <h3>{item.title}</h3>
                 <p>{item.text}</p>
+                <a href={item.image} target="_blank" rel="noreferrer">
+                  원본 이미지 열기
+                  <ExternalLink size={16} />
+                </a>
               </div>
             </article>
           ))}
@@ -544,6 +560,32 @@ function App() {
         </a>
       </footer>
       <ChatWidget />
+      {activeUseCase ? (
+        <div
+          className="image-lightbox"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="image-lightbox-title"
+          onClick={() => setActiveUseCase(null)}
+        >
+          <div className="image-lightbox-panel" onClick={(event) => event.stopPropagation()}>
+            <header>
+              <div>
+                <span>{activeUseCase.category}</span>
+                <strong id="image-lightbox-title">{activeUseCase.title}</strong>
+              </div>
+              <button type="button" onClick={() => setActiveUseCase(null)} aria-label="이미지 닫기">
+                ×
+              </button>
+            </header>
+            <img src={activeUseCase.image} alt={activeUseCase.alt} />
+            <a href={activeUseCase.image} target="_blank" rel="noreferrer">
+              원본 이미지 열기
+              <ExternalLink size={16} />
+            </a>
+          </div>
+        </div>
+      ) : null}
     </main>
   );
 }
