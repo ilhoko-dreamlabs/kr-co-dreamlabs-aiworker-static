@@ -46,8 +46,6 @@ GitHub Actions 배포를 사용하려면 GitHub repository secrets에 아래 값
 
 ```bash
 VERCEL_TOKEN=<VERCEL_TOKEN>
-VERCEL_ORG_ID=team_v0Ku5wzd28j7Ki2iAIBZamGa
-VERCEL_PROJECT_ID=prj_TyCtJh6vXu4cqcj8UZH93LyInANz
 ```
 
 ## 문서
