@@ -4,75 +4,44 @@
 
 | 항목 | 결과 |
 |---|---|
-| 프로젝트 경로 | `/workspace/github/kr-co-dreamlabs-aiworker-static` |
-| 기술 스택 | Vite + TypeScript + React + npm |
-| 목표 production URL | `https://aiworker.dreamlabs.co.kr` |
-| 설계문서 | `docs/00`부터 `docs/07`까지 갱신 또는 작성 |
-| 구현 | 커스텀 도메인 루트 배포 준비 |
-| 타입 체크 | 통과 |
-| 빌드 | 통과 |
-| 빌드 산출물 | `dist/` 생성 완료, `CNAME` 포함 |
-| 텔레그램 보고 | 실제 발송 보류, 발송용 메시지 제공 |
-| GitHub 업로드 | 완료: `main` 커밋 `ea4e2b0` |
-| GitHub Pages 배포 | 완료: `gh-pages` 커밋 `cd93523` |
-| production 검증 | 실패: DNS 해석 불가 |
+| 프로젝트 | `kr-co-dreamlabs-aiworker-static` |
+| production URL | `https://worker.dreamlabs.co.kr` |
+| 사이트 성격 | DreamLabs 대표 Worker 홍보 랜딩, 블로그형 포스트 섹션, 채널 링크 허브 |
+| 에셋 출처 | `https://assets.dreamlabs.co.kr` |
+| 유튜브 연결 | `https://www.youtube.com/@Worker-live-ai` |
+| CI/CD | GitHub Actions 기반 GitHub Pages 배포 |
+| CNAME | `worker.dreamlabs.co.kr` |
 
-## 검증 명령
+## 이번 변경
+
+| 영역 | 내용 |
+|---|---|
+| UI | 내부 작업 상태 화면을 외부 홍보용 Worker 랜딩 페이지로 교체 |
+| 콘텐츠 | Worker 소개, 핵심 기능, 블로그형 포스트 카드, YouTube/SNS 링크 영역 추가 |
+| 정적 자산 | DreamLabs 로고, Worker 아이콘, 배경 패턴을 `assets.dreamlabs.co.kr`에서 참조 |
+| SEO | description, Open Graph, favicon, theme color 추가 |
+| 배포 | `.github/workflows/pages.yml` 추가, `main` push 시 Pages artifact 배포 |
+| 보안/품질 | Vite 8 계열 업데이트, esbuild override로 npm audit 0건 유지 |
+
+## 검증 결과
 
 | 명령 | 결과 |
 |---|---|
+| `npm ci --include=dev` | 성공 |
 | `npm run check` | 성공 |
 | `npm run build` | 성공 |
-| `test -f dist/CNAME && cat dist/CNAME` | 성공: `aiworker.dreamlabs.co.kr` |
-| `sed -n '1,80p' dist/index.html` | 성공: asset 경로 `/assets/...` 확인 |
-| `git push origin main` | 성공: `ea4e2b0` 반영 |
-| `git push origin gh-pages` | 성공: `cd93523` 반영 |
-| `curl -I https://aiworker.dreamlabs.co.kr/` | 실패: `Could not resolve host` |
-| `curl -I https://ilhoko-dreamlabs.github.io/kr-co-dreamlabs-aiworker-static/` | 성공: `aiworker.dreamlabs.co.kr`로 301 리다이렉트 확인 |
+| `test "$(cat dist/CNAME)" = "worker.dreamlabs.co.kr"` | 성공 |
+| `npm audit --include=dev` | 성공, 취약점 0건 |
+| `curl -I -L https://assets.dreamlabs.co.kr/agents/dreamlabs-worker/icon/dreamlabs-bot-icon.png` | 성공, HTTP 200 |
+| `curl -I -L https://assets.dreamlabs.co.kr/brand/dreamlabs/logos/dreamlabs-symbol-color.png` | 성공, HTTP 200 |
 
-## Candidate Signals
+## 배포 후 확인
 
-| 신호 | 내용 | 후속 조치 |
-|---|---|---|
-| `ssot_recheck_limited` | 현재 세션에 SSoT 보호 API 키가 없어 `x-ssot-system-key` 재확인 불가 | secret 원문 미출력/미저장 유지 |
-| `github_pages_custom_domain_ready` | `public/CNAME`, `dist/CNAME`, 원격 `gh-pages/CNAME`에 `aiworker.dreamlabs.co.kr` 반영 | DNS 설정 필요 |
-| `production_dns_unresolved` | 현재 검증 환경에서 `aiworker.dreamlabs.co.kr` 호스트 해석 실패 | DNS CNAME/ALIAS 설정 및 전파 확인 |
-| `telegram_delivery_unavailable` | 현재 세션에 텔레그램 발송 도구 또는 봇 토큰이 없음 | 발송용 메시지를 문서와 최종 보고에 제공 |
+GitHub Actions 배포가 완료되면 다음 항목을 확인한다.
 
-## 보류 및 리스크
-
-| 항목 | 상태 | 조치 |
-|---|---|---|
-| 커밋 | 완료 | `ea4e2b0 chore: prepare aiworker custom domain deployment` |
-| 푸시/PR | main 푸시 완료, PR 미생성 | 사용자가 모두 승인하여 `main`에 직접 반영 |
-| production 배포 | `gh-pages` 배포 완료, URL 검증 실패 | DNS 해석 불가 상태 확인 필요 |
-| 텔레그램 실제 발송 | 미수행 | 발송 도구 또는 봇 토큰/채팅방 ID 필요 |
-
-## GitHub Pages 배포 상태
-
-이번 변경은 `main`과 `gh-pages`에 반영되었다. GitHub Pages custom domain 설정은 산출물 기준 준비되었으나, production URL은 DNS 해석 실패로 접속 검증이 완료되지 않았다.
-
-| 항목 | 값 |
+| 확인 | 성공 기준 |
 |---|---|
-| GitHub 저장소 | `https://github.com/ilhoko-dreamlabs/kr-co-dreamlabs-aiworker-static` |
-| 목표 production URL | `https://aiworker.dreamlabs.co.kr` |
-| 배포 방식 | `gh-pages` 브랜치 직접 배포 |
-| 소스 커밋 | `ea4e2b0` |
-| 배포 커밋 | `cd93523` |
-| Secret 처리 | SSoT/GitHub token 원문 미출력, 미저장 |
-
-## 텔레그램 발송용 메시지
-
-```text
-[DreamLabs AI Worker Static]
-단계 완료: aiworker.dreamlabs.co.kr 배포 준비
-대상 저장소: kr-co-dreamlabs-aiworker-static
-대상 경로: /workspace/github/kr-co-dreamlabs-aiworker-static
-목표 URL: https://aiworker.dreamlabs.co.kr
-결과: main 커밋/푸시 완료, gh-pages 배포 완료
-검증: npm run check 통과, npm run build 통과, dist/CNAME 포함 확인, gh-pages CNAME 확인
-production 검증: 실패 - aiworker.dreamlabs.co.kr DNS 해석 불가
-보류: 텔레그램 실제 발송
-보류 사유: 현재 세션에 텔레그램 발송 도구/봇 토큰 없음
-다음 단계: DNS CNAME/ALIAS 설정 및 전파 확인 후 production URL 재검증
-```
+| `https://worker.dreamlabs.co.kr/` | HTML 정상 응답 |
+| 브라우저 렌더링 | Worker 이미지, 로고, 포스트 카드, 채널 링크 표시 |
+| GitHub Pages 설정 | Source가 GitHub Actions로 설정 |
+| Custom domain | `worker.dreamlabs.co.kr` 유지 및 HTTPS 활성화 |

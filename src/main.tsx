@@ -2,169 +2,235 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import {
   ArrowRight,
+  Bot,
+  CalendarDays,
   CheckCircle2,
-  Clock3,
   ExternalLink,
-  FileText,
-  Layers3,
+  Github,
+  Mail,
+  MessageSquareText,
+  Play,
+  Radio,
   ShieldCheck,
-  Workflow
+  Sparkles,
+  Workflow,
+  Youtube
 } from "lucide-react";
 import "./styles.css";
 
-const workItems = [
+const ASSET_HOST = "https://assets.dreamlabs.co.kr";
+
+const highlights = [
   {
-    title: "SSoT 기준 고정",
-    status: "조건부 완료",
-    detail: "공개 힌트와 이전 보호 API 조회 결과를 기준으로 작업 범위를 고정했습니다.",
-    dependency: "보호 키 재확인"
+    icon: Workflow,
+    title: "업무 실행 자동화",
+    text: "반복 작업, 자료 정리, 배포 점검처럼 시간이 새는 운영 업무를 Worker가 절차화해 처리합니다."
   },
   {
-    title: "정적 프로젝트 생성",
-    status: "진행 완료",
-    detail: "Vite, TypeScript, React 기반으로 외부 공개용 정적 페이지를 구성했습니다.",
-    dependency: "Node.js, npm"
+    icon: ShieldCheck,
+    title: "기준 중심 운영",
+    text: "프로젝트별 지침, 승인 범위, 검증 결과를 분리해 공개 가능한 결과물만 남기도록 설계합니다."
   },
   {
-    title: "운영형 설계문서",
-    status: "진행 완료",
-    detail: "단계별 승인, 의사결정, 종속성, 배포 판단 기준을 문서화했습니다.",
-    dependency: "작업계획"
-  },
-  {
-    title: "배포 준비",
-    status: "로컬 완료",
-    detail: "aiworker.dreamlabs.co.kr 커스텀 도메인 기준으로 빌드 설정과 CNAME을 정비했습니다.",
-    dependency: "GitHub Pages, DNS"
+    icon: Radio,
+    title: "라이브 채널 확장",
+    text: "Worker Live AI 유튜브와 SNS 채널을 통해 실제 활용 사례와 업데이트를 지속적으로 공개합니다."
   }
 ];
 
-const principles = [
-  "운영자가 현재 상태를 빠르게 파악할 수 있는 밀도",
-  "외부 공개에 적합한 보수적 문구와 명확한 책임 경계",
-  "정적 호스팅 친화적인 빌드 산출물",
-  "SSoT 원문 secret 및 보호 payload 비저장"
+const posts = [
+  {
+    category: "Launch note",
+    date: "2026.08.18",
+    title: "DreamLabs Worker 대표 페이지를 공개합니다",
+    excerpt:
+      "worker.dreamlabs.co.kr은 DreamLabs의 대표 Worker를 소개하고, 활용 사례와 업데이트를 모아가는 공식 정적 허브입니다."
+  },
+  {
+    category: "Use case",
+    date: "Coming soon",
+    title: "정적 사이트, 문서, 배포 검증을 한 흐름으로",
+    excerpt:
+      "기획 문구 작성부터 GitHub Pages 배포까지 Worker가 어떤 기준으로 작업을 이어가는지 사례 중심으로 정리할 예정입니다."
+  },
+  {
+    category: "Channel",
+    date: "Coming soon",
+    title: "Worker Live AI 콘텐츠 로드맵",
+    excerpt:
+      "유튜브 쇼츠, 라이브 데모, SNS 카드뉴스를 연결해 실제 업무 자동화 장면을 더 자주 보여주는 채널 구조를 준비합니다."
+  }
+];
+
+const links = [
+  {
+    label: "Worker Live AI",
+    href: "https://www.youtube.com/@Worker-live-ai",
+    icon: Youtube,
+    active: true
+  },
+  {
+    label: "GitHub Pages",
+    href: "https://github.com/ilhoko-dreamlabs/kr-co-dreamlabs-aiworker-static",
+    icon: Github,
+    active: true
+  },
+  {
+    label: "SNS 채널",
+    href: "#channels",
+    icon: MessageSquareText,
+    active: false
+  }
 ];
 
 function App() {
   return (
-    <main className="app-shell">
-      <header className="topbar" aria-label="DreamLabs AI Worker">
-        <div>
-          <span className="eyebrow">DreamLabs external</span>
-          <h1>AI Worker 운영 상태</h1>
-        </div>
-        <a className="repo-link" href="#handoff" aria-label="작업 인계 섹션으로 이동">
-          <ExternalLink size={18} />
-          인계 정보
+    <main>
+      <header className="site-header" aria-label="DreamLabs Worker">
+        <a className="brand" href="#top" aria-label="DreamLabs Worker 홈">
+          <img
+            src={`${ASSET_HOST}/brand/dreamlabs/logos/dreamlabs-symbol-color.png`}
+            alt=""
+            width="34"
+            height="34"
+          />
+          <span>DreamLabs Worker</span>
         </a>
+        <nav aria-label="주요 메뉴">
+          <a href="#features">기능</a>
+          <a href="#posts">포스트</a>
+          <a href="#channels">채널</a>
+        </nav>
       </header>
 
-      <section className="summary-grid" aria-label="작업 요약">
-        <div className="summary-panel primary-panel">
-          <div className="panel-heading">
-            <ShieldCheck size={22} />
-            <span>작업 기준</span>
-          </div>
-          <h2>aiworker.dreamlabs.co.kr 기준 정적 배포 준비</h2>
+      <section id="top" className="hero" aria-labelledby="hero-title">
+        <div className="hero-copy">
+          <span className="eyebrow">
+            <Sparkles size={16} />
+            DreamLabs 대표 AI Worker
+          </span>
+          <h1 id="hero-title">일의 흐름을 끝까지 밀어주는 실행형 Worker</h1>
           <p>
-            이 페이지는 DreamLabs AI Worker 정적 프로젝트의 외부 공개용 첫 화면입니다.
-            보호 자격증명은 저장하지 않고, 검증 가능한 작업 상태와 배포 판단만 표시합니다.
+            DreamLabs Worker는 기획, 문서화, 개발, 검증, 정적 배포까지 이어지는
+            업무 흐름을 하나의 실행 단위로 정리합니다. 이 페이지는 Worker의 공개
+            소개와 운영 소식을 모아가는 공식 랜딩 허브입니다.
+          </p>
+          <div className="hero-actions">
+            <a className="primary-action" href="https://www.youtube.com/@Worker-live-ai">
+              <Play size={18} />
+              유튜브 채널 보기
+            </a>
+            <a className="secondary-action" href="#posts">
+              포스트 읽기
+              <ArrowRight size={18} />
+            </a>
+          </div>
+        </div>
+
+        <div className="worker-visual" aria-label="DreamLabs Worker 대표 이미지">
+          <img
+            className="worker-icon"
+            src={`${ASSET_HOST}/agents/dreamlabs-worker/icon/dreamlabs-bot-icon.png`}
+            alt="DreamLabs Worker 캐릭터 아이콘"
+          />
+          <div className="signal-panel">
+            <Bot size={22} />
+            <span>Plan · Build · Verify · Publish</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="features" className="feature-band" aria-labelledby="features-title">
+        <div className="section-heading">
+          <span>Worker가 맡는 일</span>
+          <h2 id="features-title">홍보 페이지 너머, 실제 실행 경험을 보여줍니다</h2>
+        </div>
+        <div className="feature-grid">
+          {highlights.map((item) => {
+            const Icon = item.icon;
+            return (
+              <article className="feature-card" key={item.title}>
+                <Icon size={24} />
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
+      <section id="posts" className="posts-section" aria-labelledby="posts-title">
+        <div className="section-heading">
+          <span>Worker Blog</span>
+          <h2 id="posts-title">업데이트와 활용 사례</h2>
+        </div>
+        <div className="post-list">
+          {posts.map((post) => (
+            <article className="post-card" key={post.title}>
+              <div className="post-meta">
+                <span>{post.category}</span>
+                <span>
+                  <CalendarDays size={15} />
+                  {post.date}
+                </span>
+              </div>
+              <h3>{post.title}</h3>
+              <p>{post.excerpt}</p>
+              <a href="#channels" aria-label={`${post.title} 관련 채널 보기`}>
+                더 보기
+                <ArrowRight size={17} />
+              </a>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section id="channels" className="channel-section" aria-labelledby="channels-title">
+        <div className="channel-copy">
+          <span className="eyebrow">
+            <ExternalLink size={16} />
+            Connected channels
+          </span>
+          <h2 id="channels-title">유튜브와 SNS로 확장되는 Worker 소식</h2>
+          <p>
+            현재는 Worker Live AI 유튜브 채널을 우선 연결하고, 추후 X, LinkedIn,
+            Instagram 등 SNS 채널을 순차적으로 추가할 수 있도록 링크 구조를 열어두었습니다.
           </p>
         </div>
-
-        <div className="metric-band" aria-label="핵심 지표">
-          <div>
-            <span className="metric-value">4</span>
-            <span className="metric-label">작업 트랙</span>
-          </div>
-          <div>
-            <span className="metric-value">0</span>
-            <span className="metric-label">저장된 secret</span>
-          </div>
-          <div>
-            <span className="metric-value">1</span>
-            <span className="metric-label">배포 보류 조건</span>
-          </div>
+        <div className="channel-links">
+          {links.map((link) => {
+            const Icon = link.icon;
+            return (
+              <a
+                className={link.active ? "channel-link" : "channel-link is-disabled"}
+                href={link.href}
+                key={link.label}
+                aria-disabled={!link.active}
+              >
+                <Icon size={20} />
+                <span>{link.label}</span>
+                {link.active ? <ExternalLink size={17} /> : <span>준비중</span>}
+              </a>
+            );
+          })}
         </div>
       </section>
 
-      <section className="work-table" aria-labelledby="work-status-title">
-        <div className="section-title">
-          <Workflow size={20} />
-          <h2 id="work-status-title">단계별 상태</h2>
-        </div>
-        <div className="table-scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>항목</th>
-                <th>상태</th>
-                <th>설명</th>
-                <th>종속성</th>
-              </tr>
-            </thead>
-            <tbody>
-              {workItems.map((item) => (
-                <tr key={item.title}>
-                  <td>{item.title}</td>
-                  <td>
-                    <span className="status-pill">{item.status}</span>
-                  </td>
-                  <td>{item.detail}</td>
-                  <td>{item.dependency}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section className="split-section" aria-label="운영 원칙과 진행 흐름">
-        <div className="plain-panel">
-          <div className="section-title">
-            <Layers3 size={20} />
-            <h2>설계 원칙</h2>
-          </div>
-          <ul className="principle-list">
-            {principles.map((principle) => (
-              <li key={principle}>
-                <CheckCircle2 size={18} />
-                <span>{principle}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="timeline">
-          <div className="section-title">
-            <Clock3 size={20} />
-            <h2>다음 판단</h2>
-          </div>
-          <ol>
-            <li>빌드 산출물을 검증합니다.</li>
-            <li>커밋, 푸시, PR 또는 gh-pages 배포 승인 범위를 확정합니다.</li>
-            <li>배포가 완료되면 production URL을 검증합니다.</li>
-          </ol>
-        </div>
-      </section>
-
-      <section id="handoff" className="handoff" aria-labelledby="handoff-title">
+      <footer className="site-footer">
+        <img
+          src={`${ASSET_HOST}/footer/dreamlabs/dreamlabs-logo-default.png`}
+          alt="DreamLabs"
+          width="132"
+        />
         <div>
-          <div className="section-title">
-            <FileText size={20} />
-            <h2 id="handoff-title">인계 메모</h2>
-          </div>
-          <p>
-            작업 문서와 구현 파일은 같은 저장소 안에 유지됩니다. 운영 배포는 별도 승인된
-            런북이 확인될 때 수행하며, 목표 production URL은 https://aiworker.dreamlabs.co.kr 입니다.
-          </p>
+          <strong>worker.dreamlabs.co.kr</strong>
+          <span>GitHub Pages 기반 정적 사이트 · CI/CD 자동 배포 구성</span>
         </div>
-        <a className="cta-link" href="/docs/">
-          문서 확인
-          <ArrowRight size={18} />
+        <a href="mailto:contact@dreamlabs.co.kr">
+          <Mail size={17} />
+          contact
         </a>
-      </section>
+      </footer>
     </main>
   );
 }

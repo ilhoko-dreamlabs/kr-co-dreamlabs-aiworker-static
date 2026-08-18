@@ -1,13 +1,13 @@
-# DreamLabs AI Worker Static
+# DreamLabs Worker Static
 
-DreamLabs external 범위의 AI Worker 운영 상태를 정리하는 정적 웹 프로젝트입니다.
+DreamLabs 대표 Worker를 홍보하고 블로그형 업데이트와 외부 채널을 연결하는 정적 웹 프로젝트입니다.
 
 ## 운영 URL
 
 | 항목 | 값 |
 |---|---|
-| 목표 production URL | `https://aiworker.dreamlabs.co.kr` |
-| 배포 방식 | GitHub Pages `gh-pages` 브랜치 정적 배포 |
+| 목표 production URL | `https://worker.dreamlabs.co.kr` |
+| 배포 방식 | GitHub Actions 기반 GitHub Pages 정적 배포 |
 | 커스텀 도메인 파일 | `public/CNAME` |
 | Vite base | `/` |
 
@@ -38,17 +38,17 @@ npm run build
 | `docs/04-implementation-plan.md` | 구현 계획 |
 | `docs/05-verification-deployment.md` | 검증 및 배포 판단 |
 | `docs/06-final-report.md` | 최종 작업 보고 |
-| `docs/07-aiworker-domain-migration-plan.md` | `aiworker.dreamlabs.co.kr` 배포 전환 설계 |
+| `docs/07-aiworker-domain-migration-plan.md` | `worker.dreamlabs.co.kr` 배포 전환 설계 |
 
 ## 배포
 
-GitHub Pages 배포는 `dist/` 산출물을 `gh-pages` 브랜치에 직접 업로드하는 방식입니다.
+GitHub Pages 배포는 `main` 브랜치 push 시 `.github/workflows/pages.yml`이 `dist/` 산출물을 빌드해 Pages에 게시하는 방식입니다.
 
 ```bash
 npm run build
 ```
 
-`https://aiworker.dreamlabs.co.kr` 루트 도메인으로 배포하기 위해 Vite `base`는 `/`로 설정하고, `public/CNAME`을 통해 빌드 산출물에 `CNAME`이 포함되도록 유지합니다.
+`https://worker.dreamlabs.co.kr` 루트 도메인으로 배포하기 위해 Vite `base`는 `/`로 설정하고, `public/CNAME`을 통해 빌드 산출물에 `CNAME`이 포함되도록 유지합니다.
 
 ## 운영 주의사항
 

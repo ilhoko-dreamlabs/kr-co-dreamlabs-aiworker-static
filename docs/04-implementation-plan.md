@@ -27,6 +27,6 @@
 | 리스크 | 영향 | 대응 |
 |---|---|---|
 | npm registry 접근 실패 | 의존성 설치 불가 | 네트워크 재시도 또는 승인 후 재실행 |
-| DNS가 GitHub Pages를 가리키지 않음 | `aiworker.dreamlabs.co.kr` 접속 실패 | DNS/Pages 설정 확인 후 별도 승인 절차로 조치 |
-| GitHub Pages custom domain 미설정 | CNAME만으로 운영 반영 불완전 | Pages 설정 확인 또는 gh-pages 배포 후 production 검증 |
+| DNS가 GitHub Pages를 가리키지 않음 | `worker.dreamlabs.co.kr` 접속 실패 | DNS/Pages 설정 확인 후 별도 승인 절차로 조치 |
+| GitHub Pages custom domain 미설정 | CNAME만으로 운영 반영 불완전 | Pages 설정 확인 또는 Actions 배포 후 production 검증 |
 | SSoT 보호 API 재확인 제한 | 최신 정책 반영 제한 | candidate signal 명시 |
