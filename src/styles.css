@@ -59,8 +59,7 @@ main {
 .post-meta,
 .channel-link,
 .site-footer,
-.eyebrow,
-.signal-panel {
+.eyebrow {
   display: flex;
   align-items: center;
 }
@@ -194,41 +193,46 @@ p {
   color: #19352f;
 }
 
-.worker-visual {
-  position: relative;
+.hero-chat-area {
   display: grid;
-  min-height: 520px;
-  place-items: center;
-  overflow: hidden;
+  gap: 14px;
+}
+
+.worker-identity {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
   border: 1px solid #d8e1da;
   border-radius: 8px;
   background:
-    linear-gradient(150deg, rgba(29, 84, 76, 0.92), rgba(38, 56, 67, 0.88)),
+    linear-gradient(150deg, rgba(29, 84, 76, 0.94), rgba(38, 56, 67, 0.9)),
     url("https://assets.dreamlabs.co.kr/ui-patterns/backgrounds/dreamlabs-grid-subtle.svg");
-  box-shadow: 0 22px 50px rgba(27, 56, 50, 0.16);
-}
-
-.worker-icon {
-  width: min(74%, 430px);
-  height: auto;
-  filter: drop-shadow(0 30px 46px rgba(0, 0, 0, 0.28));
-}
-
-.signal-panel {
-  position: absolute;
-  right: 18px;
-  bottom: 18px;
-  gap: 10px;
-  max-width: calc(100% - 36px);
-  min-height: 48px;
-  padding: 0 14px;
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  border-radius: 8px;
-  background: rgba(13, 28, 25, 0.58);
   color: #ffffff;
-  font-size: 0.93rem;
-  font-weight: 800;
-  backdrop-filter: blur(14px);
+  box-shadow: 0 18px 36px rgba(27, 56, 50, 0.14);
+}
+
+.worker-identity img {
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.24));
+}
+
+.worker-identity div {
+  display: grid;
+  gap: 5px;
+}
+
+.worker-identity strong {
+  font-size: 1.05rem;
+  line-height: 1.25;
+}
+
+.worker-identity span {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.86rem;
+  font-weight: 780;
 }
 
 .feature-band,
@@ -417,6 +421,12 @@ p {
   box-shadow: 0 22px 54px rgba(20, 40, 36, 0.24);
 }
 
+.chat-panel.is-hero-chat {
+  width: 100%;
+  max-height: none;
+  box-shadow: 0 18px 38px rgba(27, 56, 50, 0.13);
+}
+
 .chat-panel-header {
   display: flex;
   align-items: center;
@@ -452,6 +462,10 @@ p {
   line-height: 1;
 }
 
+.is-hero-chat .chat-panel-header {
+  background: #ffffff;
+}
+
 .chat-messages {
   display: grid;
   align-content: start;
@@ -461,6 +475,11 @@ p {
   overflow-y: auto;
   padding: 16px;
   background: #fbfcfa;
+}
+
+.is-hero-chat .chat-messages {
+  min-height: 180px;
+  max-height: 270px;
 }
 
 .chat-message {
@@ -484,6 +503,32 @@ p {
   border: 1px solid #dce5de;
   background: #ffffff;
   color: #30443f;
+}
+
+.starter-prompts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 14px 14px;
+  background: #fbfcfa;
+}
+
+.starter-prompts button {
+  min-height: 34px;
+  padding: 0 10px;
+  border: 1px solid #d8e4dd;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1c4c43;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 780;
+  cursor: pointer;
+}
+
+.starter-prompts button:hover {
+  border-color: #9bb9ae;
+  background: #f4f8f5;
 }
 
 .chat-form {
@@ -569,8 +614,22 @@ p {
     font-size: clamp(3rem, 16vw, 4.8rem);
   }
 
-  .worker-visual {
-    min-height: 360px;
+  .hero-chat-area {
+    order: -1;
+  }
+
+  .worker-identity {
+    padding: 12px;
+  }
+
+  .worker-identity img {
+    width: 58px;
+    height: 58px;
+  }
+
+  .is-hero-chat .chat-messages {
+    min-height: 168px;
+    max-height: 240px;
   }
 
   .feature-grid,

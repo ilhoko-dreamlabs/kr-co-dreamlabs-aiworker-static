@@ -4,7 +4,6 @@ import {
   ArrowRight,
   Bot,
   CalendarDays,
-  CheckCircle2,
   ExternalLink,
   Github,
   Mail,
@@ -89,6 +88,8 @@ const links = [
   }
 ];
 
+const starterPrompts = ["Worker로 무엇을 할 수 있나요?", "정적 사이트 배포를 도와줘", "업무 자동화 사례가 궁금해요"];
+
 function createIdempotencyKey() {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
     return crypto.randomUUID();
@@ -163,8 +164,23 @@ async function pollChatResult(resultUrl: string) {
   return null;
 }
 
-function ChatWidget() {
-  const [isOpen, setIsOpen] = React.useState(false);
+type ChatPanelProps = {
+  idPrefix: string;
+  title: string;
+  subtitle: string;
+  className?: string;
+  onClose?: () => void;
+  starterPrompts?: string[];
+};
+
+function ChatPanel({
+  idPrefix,
+  title,
+  subtitle,
+  className,
+  onClose,
+  starterPrompts: promptSuggestions = []
+}: ChatPanelProps) {
   const [input, setInput] = React.useState("");
   const [messages, setMessages] = React.useState<ChatMessage[]>([
     {
@@ -174,6 +190,10 @@ function ChatWidget() {
     }
   ]);
   const [isSending, setIsSending] = React.useState(false);
+
+  function selectStarterPrompt(prompt: string) {
+    setInput(prompt);
+  }
 
   async function sendMessage(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -235,41 +255,65 @@ function ChatWidget() {
   }
 
   return (
+    <section className={`chat-panel ${className || ""}`} aria-label="Worker 채팅">
+      <header className="chat-panel-header">
+        <div>
+          <strong>{title}</strong>
+          <span>{subtitle}</span>
+        </div>
+        {onClose ? (
+          <button type="button" onClick={onClose} aria-label="채팅 닫기">
+            ×
+          </button>
+        ) : null}
+      </header>
+      <div className="chat-messages" aria-live="polite">
+        {messages.map((message) => (
+          <p className={`chat-message is-${message.role}`} key={message.id}>
+            {message.text}
+          </p>
+        ))}
+        {isSending ? <p className="chat-message is-assistant">Worker가 처리 중입니다.</p> : null}
+      </div>
+      {promptSuggestions.length ? (
+        <div className="starter-prompts" aria-label="추천 질문">
+          {promptSuggestions.map((prompt) => (
+            <button type="button" key={prompt} onClick={() => selectStarterPrompt(prompt)}>
+              {prompt}
+            </button>
+          ))}
+        </div>
+      ) : null}
+      <form className="chat-form" onSubmit={sendMessage}>
+        <label htmlFor={`${idPrefix}-chat-input`}>메시지</label>
+        <textarea
+          id={`${idPrefix}-chat-input`}
+          value={input}
+          onChange={(event) => setInput(event.target.value)}
+          placeholder="무엇을 도와드릴까요?"
+          rows={2}
+        />
+        <button type="submit" disabled={isSending || !input.trim()}>
+          <MessageSquareText size={17} />
+          전송
+        </button>
+      </form>
+    </section>
+  );
+}
+
+function ChatWidget() {
+  const [isOpen, setIsOpen] = React.useState(false);
+
+  return (
     <aside className="chat-widget" aria-label="DreamLabs Worker 챗봇">
       {isOpen ? (
-        <section className="chat-panel" aria-label="Worker 채팅">
-          <header className="chat-panel-header">
-            <div>
-              <strong>Worker Chat</strong>
-              <span>worker0 Remote Request API</span>
-            </div>
-            <button type="button" onClick={() => setIsOpen(false)} aria-label="채팅 닫기">
-              ×
-            </button>
-          </header>
-          <div className="chat-messages" aria-live="polite">
-            {messages.map((message) => (
-              <p className={`chat-message is-${message.role}`} key={message.id}>
-                {message.text}
-              </p>
-            ))}
-            {isSending ? <p className="chat-message is-assistant">Worker가 처리 중입니다.</p> : null}
-          </div>
-          <form className="chat-form" onSubmit={sendMessage}>
-            <label htmlFor="worker-chat-input">메시지</label>
-            <textarea
-              id="worker-chat-input"
-              value={input}
-              onChange={(event) => setInput(event.target.value)}
-              placeholder="무엇을 도와드릴까요?"
-              rows={2}
-            />
-            <button type="submit" disabled={isSending || !input.trim()}>
-              <MessageSquareText size={17} />
-              전송
-            </button>
-          </form>
-        </section>
+        <ChatPanel
+          idPrefix="worker-floating"
+          title="Worker Chat"
+          subtitle="worker0 Remote Request API"
+          onClose={() => setIsOpen(false)}
+        />
       ) : null}
       <button
         className="chat-toggle"
@@ -329,16 +373,26 @@ function App() {
           </div>
         </div>
 
-        <div className="worker-visual" aria-label="DreamLabs Worker 대표 이미지">
-          <img
-            className="worker-icon"
-            src={`${ASSET_HOST}/agents/dreamlabs-worker/icon/dreamlabs-bot-icon.png`}
-            alt="DreamLabs Worker 캐릭터 아이콘"
-          />
-          <div className="signal-panel">
-            <Bot size={22} />
-            <span>Plan · Build · Verify · Publish</span>
+        <div className="hero-chat-area">
+          <div className="worker-identity" aria-label="DreamLabs Worker">
+            <img
+              src={`${ASSET_HOST}/agents/dreamlabs-worker/icon/dreamlabs-bot-icon.png`}
+              alt=""
+              width="76"
+              height="76"
+            />
+            <div>
+              <strong>DreamLabs Worker Consultation</strong>
+              <span>Plan · Build · Verify · Publish</span>
+            </div>
           </div>
+          <ChatPanel
+            idPrefix="worker-hero"
+            title="Worker에게 바로 질문하세요"
+            subtitle="worker0 Remote Request API"
+            className="is-hero-chat"
+            starterPrompts={starterPrompts}
+          />
         </div>
       </section>
 
