@@ -95,6 +95,41 @@ const useCases = [
   }
 ];
 
+const videoCases = [
+  {
+    title: "웹 챗봇에서 Worker에게 바로 요청",
+    category: "Web Chat",
+    id: "1Uu0611qQmc2_ArtxEn-mt2s_rGxukYfZ",
+    poster: "/use-cases/messenger-worker-response.png",
+    text:
+      "랜딩페이지 진입 후 바로 Worker에게 질문하고 Remote Request API 응답을 확인하는 흐름입니다."
+  },
+  {
+    title: "협업 채널에서 요청 처리",
+    category: "Mattermost",
+    id: "16HIEalhKoiUlje4XF-jpNMELn_4aGL-D",
+    poster: "/use-cases/mattermost-worker-collaboration.png",
+    text:
+      "업무 채널 안에서 Worker를 호출하고, 실행 결과가 대화 맥락에 남는 실제 사용 장면입니다."
+  },
+  {
+    title: "Worker Console로 실행 상태 확인",
+    category: "Console",
+    id: "1XShtrAT1UboWkaSah7IFGf7cKqJsMV3Q",
+    poster: "/use-cases/local-worker-knowledge-wiki.png",
+    text:
+      "로컬 작업 세션과 실행 상태를 확인하며 결과물을 검증하는 운영자 관점의 화면입니다."
+  },
+  {
+    title: "Runtime Knowledge 기반 업무 맥락 활용",
+    category: "Knowledge",
+    id: "1QOTwabqGwfk2QnZg0j6AAIX6yXYYQAX6",
+    poster: "/use-cases/local-worker-knowledge-wiki.png",
+    text:
+      "Worker가 세션 맥락과 지식 기준을 참고해 요청을 이어가는 실제 업무 기록 흐름입니다."
+  }
+];
+
 const links = [
   {
     label: "Worker Live AI",
@@ -117,6 +152,14 @@ const links = [
 ];
 
 const starterPrompts = ["Worker로 무엇을 할 수 있나요?", "정적 사이트 배포를 도와줘", "업무 자동화 사례가 궁금해요"];
+
+function getDrivePreviewUrl(id: string) {
+  return `https://drive.google.com/file/d/${id}/preview`;
+}
+
+function getDriveViewUrl(id: string) {
+  return `https://drive.google.com/file/d/${id}/view`;
+}
 
 function createIdempotencyKey() {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
@@ -362,6 +405,8 @@ function ChatWidget() {
 
 function App() {
   const [activeUseCase, setActiveUseCase] = React.useState<(typeof useCases)[number] | null>(null);
+  const [activeVideo, setActiveVideo] = React.useState<(typeof videoCases)[number] | null>(null);
+  const featuredVideo = videoCases[0];
 
   return (
     <main>
@@ -408,6 +453,24 @@ function App() {
         </div>
 
         <div className="hero-chat-area">
+          <section className="hero-demo" aria-label="실제 Worker 사용 영상">
+            <div className="hero-demo-copy">
+              <span>Live capture</span>
+              <strong>실제 Worker 사용 장면</strong>
+            </div>
+            <button
+              className="hero-demo-button"
+              type="button"
+              onClick={() => setActiveVideo(featuredVideo)}
+              aria-label={`${featuredVideo.title} 영상 보기`}
+            >
+              <img src={featuredVideo.poster} alt="" />
+              <span>
+                <Play size={18} />
+                영상 보기
+              </span>
+            </button>
+          </section>
           <div className="worker-identity" aria-label="DreamLabs Worker">
             <img
               src={`${ASSET_HOST}/agents/dreamlabs-worker/icon/dreamlabs-bot-icon.png`}
@@ -484,6 +547,43 @@ function App() {
               </div>
             </article>
           ))}
+        </div>
+        <div className="video-case-section" aria-labelledby="video-cases-title">
+          <div className="section-heading is-compact">
+            <span>Worker Live Captures</span>
+            <h2 id="video-cases-title">영상으로 확인하는 실제 사용 흐름</h2>
+            <p>
+              Google Drive에 모아둔 실제 화면 녹화입니다. 각 항목을 누르면 사이트 안에서
+              바로 재생하고, 필요하면 원본 Drive 파일도 열 수 있습니다.
+            </p>
+          </div>
+          <div className="video-case-grid">
+            {videoCases.map((item) => (
+              <article className="video-case-card" key={item.id}>
+                <button
+                  className="video-case-preview"
+                  type="button"
+                  onClick={() => setActiveVideo(item)}
+                  aria-label={`${item.title} 영상 재생`}
+                >
+                  <img src={item.poster} alt="" loading="lazy" />
+                  <span>
+                    <Play size={18} />
+                    재생
+                  </span>
+                </button>
+                <div className="video-case-copy">
+                  <span>{item.category}</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                  <a href={getDriveViewUrl(item.id)} target="_blank" rel="noreferrer">
+                    Drive 원본 열기
+                    <ExternalLink size={16} />
+                  </a>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -581,6 +681,37 @@ function App() {
             <img src={activeUseCase.image} alt={activeUseCase.alt} />
             <a href={activeUseCase.image} target="_blank" rel="noreferrer">
               원본 이미지 열기
+              <ExternalLink size={16} />
+            </a>
+          </div>
+        </div>
+      ) : null}
+      {activeVideo ? (
+        <div
+          className="video-lightbox"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="video-lightbox-title"
+          onClick={() => setActiveVideo(null)}
+        >
+          <div className="video-lightbox-panel" onClick={(event) => event.stopPropagation()}>
+            <header>
+              <div>
+                <span>{activeVideo.category}</span>
+                <strong id="video-lightbox-title">{activeVideo.title}</strong>
+              </div>
+              <button type="button" onClick={() => setActiveVideo(null)} aria-label="영상 닫기">
+                ×
+              </button>
+            </header>
+            <iframe
+              src={getDrivePreviewUrl(activeVideo.id)}
+              title={activeVideo.title}
+              allow="autoplay; fullscreen"
+              allowFullScreen
+            />
+            <a href={getDriveViewUrl(activeVideo.id)} target="_blank" rel="noreferrer">
+              Drive 원본 열기
               <ExternalLink size={16} />
             </a>
           </div>
