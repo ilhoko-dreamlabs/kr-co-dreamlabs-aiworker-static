@@ -152,6 +152,7 @@ const links = [
 ];
 
 const starterPrompts = ["Worker로 무엇을 할 수 있나요?", "정적 사이트 배포를 도와줘", "업무 자동화 사례가 궁금해요"];
+const CHAT_SESSION_STORAGE_KEY = "dreamlabs-worker-chat-session-id";
 
 function getDrivePreviewUrl(id: string) {
   return `https://drive.google.com/file/d/${id}/preview`;
@@ -167,6 +168,29 @@ function createIdempotencyKey() {
   }
 
   return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+function getChatSessionId() {
+  if (typeof window === "undefined") {
+    return createIdempotencyKey();
+  }
+
+  const existing = window.localStorage.getItem(CHAT_SESSION_STORAGE_KEY);
+  if (existing) {
+    return existing;
+  }
+
+  const sessionId = `worker-web-${createIdempotencyKey()}`;
+  window.localStorage.setItem(CHAT_SESSION_STORAGE_KEY, sessionId);
+  return sessionId;
+}
+
+function getSourcePage() {
+  if (typeof window === "undefined") {
+    return "/";
+  }
+
+  return `${window.location.pathname}${window.location.search}${window.location.hash}`;
 }
 
 function extractReply(payload: unknown): string {
@@ -217,11 +241,21 @@ function getResultUrl(payload: unknown) {
   return typeof value === "string" ? value : "";
 }
 
-async function pollChatResult(resultUrl: string) {
+async function pollChatResult(
+  resultUrl: string,
+  context: { prompt: string; sessionId: string; sourcePage: string; idempotencyKey: string }
+) {
   for (let attempt = 0; attempt < 10; attempt += 1) {
     await new Promise((resolve) => setTimeout(resolve, attempt < 3 ? 1200 : 2500));
 
-    const response = await fetch(`/api/chat-result?resultUrl=${encodeURIComponent(resultUrl)}`);
+    const params = new URLSearchParams({
+      resultUrl,
+      prompt: context.prompt,
+      sessionId: context.sessionId,
+      sourcePage: context.sourcePage,
+      idempotencyKey: context.idempotencyKey
+    });
+    const response = await fetch(`/api/chat-result?${params.toString()}`);
     const payload = await response.json();
 
     if (response.status === 202) {
@@ -279,6 +313,8 @@ function ChatPanel({
     }
 
     const idempotencyKey = createIdempotencyKey();
+    const sessionId = getChatSessionId();
+    const sourcePage = getSourcePage();
 
     setInput("");
     setIsSending(true);
@@ -293,12 +329,12 @@ function ChatPanel({
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ prompt, waitSeconds: 30, idempotencyKey })
+        body: JSON.stringify({ prompt, waitSeconds: 30, idempotencyKey, sessionId, sourcePage })
       });
       const payload = await response.json();
       const finalPayload =
         response.status === 202 && getResultUrl(payload)
-          ? await pollChatResult(getResultUrl(payload))
+          ? await pollChatResult(getResultUrl(payload), { prompt, sessionId, sourcePage, idempotencyKey })
           : payload;
       const reply = extractReply(finalPayload);
 

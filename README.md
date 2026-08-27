@@ -42,6 +42,21 @@ REMOTE_REQUEST_API_KEY=<REMOTE_REQUEST_API_KEY>
 
 주의: `REMOTE_REQUEST_API_KEY`에는 `NEXT_PUBLIC_` 접두사를 붙이지 않습니다.
 
+챗봇 질문/응답 로그는 `www.dreamlabs.co.kr`과 같은 Chat Insight Postgres/Neon DB에 저장합니다.
+DB URL 우선순위는 `CHAT_INSIGHTS_DATABASE_URL` → `DATABASE_URL` → `POSTGRES_URL`입니다.
+
+```bash
+CHAT_INSIGHTS_DATABASE_URL=<shared-chat-insight-postgres-url>
+CHAT_SITE_DOMAIN=worker.dreamlabs.co.kr
+CHAT_SITE_ID=worker-dreamlabs-co-kr
+CHAT_SITE_DISPLAY_NAME=DreamLabs Worker
+CHAT_SITE_TYPE=operations
+```
+
+DB URL은 서버 함수에서만 읽으며 브라우저 번들에 포함하지 않습니다. 원천 저장 테이블은
+기존 `chat_sites`, `chat_sessions`, `chat_messages`, `lead_insights`를 사용하고 `site_id`로
+사이트별 데이터를 분리합니다.
+
 GitHub Actions 배포를 사용하려면 GitHub repository secrets에 아래 값을 입력합니다.
 
 ```bash
@@ -79,5 +94,6 @@ Vercel 전환 후 DNS는 Vercel에서 안내하는 CNAME/A 레코드 기준으�
 
 - 기존 공개 URL 변경, 자산 삭제, DNS/SSL 변경, production 배포는 명시 승인 후 수행합니다.
 - `REMOTE_REQUEST_API_KEY`는 Vercel 서버 환경변수에만 저장합니다.
+- `CHAT_INSIGHTS_DATABASE_URL`, `DATABASE_URL`, `POSTGRES_URL` 원문은 로그와 보고에 출력하지 않습니다.
 - 커밋, 푸시, PR 생성은 별도 승인 항목으로 기록합니다.
 - 텔레그램 보고는 발송 도구 또는 봇 토큰이 제공된 경우에만 실제 발송할 수 있습니다.
